@@ -1,0 +1,74 @@
+{// Noemi Exchange Phase 1: Safe Conversion & Display Script
+
+const LAMPORTS_PER_SOL = 1_000_000_000;
+
+export function convertValue(amount, chain) {
+  if (chain.toLowerCase() === "eth") {
+    return {
+      raw: BigInt(amount * 1e18),
+      unit: "wei"
+    };
+  }
+  if (chain.toLowerCase() === "sol") {
+    return {
+      raw: Math.floor(amount * LAMPORTS_PER_SOL),
+      unit: "lamports"
+    };
+  }
+  throw new Error("Unsupported chain");
+}
+
+// Example usage
+console.log("ETH 0.1 →", convertValue(0.1, "eth"));
+console.log("SOL 1.5 →", convertValue(1.5, "sol"));
+
+// Dashboard data fetch (Firestore)
+import { getFirestore, doc, getDoc } from "@firebase/firestore";
+const db = getFirestore();
+
+async function fetchPlatformCap() {
+  const docRef = doc(db, "platform_cap", "current");
+  const snapshot = await getDoc(docRef);
+  if (snapshot.exists()) {
+    return snapshot.data();
+  }
+  return null;
+}
+
+// Display in Fireball app
+fetchPlatformCap().then(data => {
+  console.log("Noemi Platform Cap:", data);
+});{
+  "platform_name": "Noemi Exchange",
+  "status": "operational",
+  "declared_cap_usd": 12500000,
+  "last_audit": "2026-01-12",
+  "disclaimer": "Read-only transparency data. No customer funds are custodied at this stage.",
+  "chains": {
+    "ethereum": {
+      "network": "mainnet",
+      "wallet": "0xYOUR_PUBLIC_WALLET",
+      "balance_eth": 3200,
+      "usd_value": 9600000
+    },
+    "solana": {
+      "network": "mainnet-beta",
+      "wallet": "YOUR_SOL_PUBLIC_ADDRESS",
+      "balance_sol": 98000,
+      "usd_value": 2900000
+    }
+  },
+  "modules": {
+    "conversion": true,
+    "pooling": "display-only",
+    "minting": "display-only",
+    "staking": "display-only",
+    "banking": "declared-reserves"
+  }
+}/* 
+© 2026 Noemi Exchange. All Rights Reserved.
+Proprietary License: Unauthorized use is prohibited.
+*/
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {}
+}
